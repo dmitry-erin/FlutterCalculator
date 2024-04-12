@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() => runApp(new MyApp());
+//TODO: window size (import window manager package)
 
 class MyApp extends StatelessWidget {
   @override
@@ -32,14 +33,22 @@ class _MyHomePageState extends State<MyHomePage> {
   double num2 = 0.0;
   String operand = "";
   bool operandPressed = false;
+  bool resultReady = false;
 
-  buttonPressed(String buttonText) {
-    if (buttonText == "CLEAR") {
+  clearButtonPressed() {
+    setState(() {
+      output = "0";
       _output = "0";
       num1 = 0.0;
       num2 = 0.0;
       operand = "";
-    } else if (buttonText == "+" ||
+      operandPressed = false;
+      resultReady = false;
+    });
+  }
+
+  buttonPressed(String buttonText) {
+    if (buttonText == "+" ||
         buttonText == "-" ||
         buttonText == "/" ||
         buttonText == "X") {
@@ -75,7 +84,9 @@ class _MyHomePageState extends State<MyHomePage> {
       num1 = 0.0;
       num2 = 0.0;
       operand = "";
+      resultReady = true;
     } else {
+      if (resultReady) _output = "0";
       _output = _output + buttonText;
     }
 
@@ -97,6 +108,23 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         child: Text(
           buttonText,
+          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget buildClearButton() {
+    return Expanded(
+      child: OutlinedButton(
+        onPressed: () => clearButtonPressed(),
+        style: ButtonStyle(
+          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+            EdgeInsets.all(24.0),
+          ),
+        ),
+        child: Text(
+          "CLEAR",
           style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
         ),
       ),
@@ -150,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 buildButton("+")
               ]),
               new Row(children: [
-                buildButton("CLEAR"),
+                buildClearButton(),
                 buildButton("="),
               ])
             ])
